@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Lusitana:wght@400;700&family=Prosto+One&display=swap');
+
+:root {
+    --primary-color: #886efd;
+    --secundary-color: #4FF3BA;
+    --dark-color: #231850;
+    --light-color: #F1F3FF;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Lusitana';
+    background: var(--dark-color);
+}
+
+/* HEADER */
+
+header {
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem 0;
+    font-size: 2rem;
+}
+
+.search-bar {
+    background-color: var(--light-color);
+    display: flex;
+    justify-content: space-between;
+    border-radius: 5px;
+    color: #BBB;
+}
+
+.search-bar > input {
+    justify-self: stretch;
+    border: none;
+    font-size: 1.5rem;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+}
+
+.search-bar > img {
+    cursor: pointer;
+    max-width: 100%;
+    padding: 1rem;
+}
+
+.nav-bar {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    justify-content: space-between;
+    gap: 5rem;
+}
+
+.nav-bar li {
+    cursor: pointer;
+}
+
+.nav-menu-item {
+    position: relative;
+    color: var(--light-color);
+}
+
+.nav-menu-item::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 5px;
+    height: 5px;
+    width: 0;
+    transition: 0.3s;
+    background-color: var(--light-color);
+}
+
+.nav-menu-item:hover::after {
+    width: 100%;
+}
+
+.nav-menu-account {
+    color: var(--dark-color);
+}
+
+.register {
+    background-color: var(--dark-color);
+    color:  var(--light-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 5px;
+}
+
+/* BANNER */
+
+.banner {
+    margin: 5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+    user-select: none;
+}
+
+.banner img {
+    width: 100%;
+    -webkit-user-drag: none;
+}
+
+.banner h1 {
+    position: absolute;
+    font-size: 8rem;
+    font-family: "Prosto One", sans-serif;
+    color: var(--secundary-color);
+    text-shadow: 0px 3px 0px var(--light-color)
+}
