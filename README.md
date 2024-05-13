@@ -17,4 +17,4 @@ Mencione as ferramentas que você usou para criar seu projeto
 
 Mencione todos aqueles que ajudaram a levantar o projeto desde o seu início
 
-* **Arthur** - *Front-end página principál* - [Arthur](https://github.com/aarthx)
+* **Arthur** - *Front-end página principal* - [Arthur](https://github.com/aarthx)
