@@ -2,8 +2,6 @@
 
 Site da loja de roupas Steve Store, projeto que utiliza a Fake Store API
 
-Termine com um exemplo de como obter dados do sistema ou como usá-los para uma pequena demonstração.
-
 ## 🛠️ Construído com
 
 Mencione as ferramentas que você usou para criar seu projeto
