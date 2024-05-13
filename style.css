@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Lusitana:wght@400;700&family=Prosto+One&display=swap');
 
+p,h1,h2 {
+    margin: 0;
+    padding: 0;
+}
+
 :root {
     --primary-color: #886efd;
     --secundary-color: #4FF3BA;
@@ -114,4 +119,88 @@ header {
     font-family: "Prosto One", sans-serif;
     color: var(--secundary-color);
     text-shadow: 0px 3px 0px var(--light-color)
+}
+
+/* HOME */
+
+main {
+    max-width: 100rem;
+    margin: 0 auto;
+}
+
+.primary-bar,.secundary-bar{
+    width: 100%;
+    height: 10px;
+    margin-bottom: 3rem;
+    border-radius: 10px;
+}
+
+.primary-bar {
+    background-color: var(--secundary-color);
+}
+
+.secundary-bar {
+    background-color: var(--primary-color);
+}
+
+.clothes ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+    gap: 3rem;
+}
+
+.clothes ul li {
+    max-width: 20rem;
+    color: var(--light-color);
+    cursor: pointer;
+    margin-bottom: 3rem;
+}
+
+.clothes ul li img {
+    max-width: 100%;
+    border-radius: 0 20px 0 20px;
+}
+
+.clothes ul li:hover img {
+    max-width: 100%;
+    filter: brightness(75%);
+}
+
+/* FOOTER */
+
+footer {
+    background-color: #000;
+    color: var(--light-color);
+    padding: 3rem 0 2rem 0;
+    font-size: 1.25rem;
+    text-align: center;
+}
+
+.vantagens {
+    background-color: var(--dark-color);
+    max-width: 100rem;
+    margin: auto;
+}
+
+.vantagens ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    padding: 3rem;
+    gap: 2rem;
+}
+
+.vantagens ul li {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    gap: 1rem;
+}
+.vantagens ul li p span {
+    color: var(--secundary-color);
+    font-weight: bold;
 }

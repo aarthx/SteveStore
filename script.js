@@ -1,6 +1,8 @@
 const site = document.getElementById('root')
 carregarComponente('./components/header.html', site)
 carregarComponente('./components/banner.html', site)
+carregarComponente('./components/home.html', site)
+carregarComponente('./components/footer.html', site)
 
 function carregarComponente(urlComponent, componentePai) {
     fetch(urlComponent)
