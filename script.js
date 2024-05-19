@@ -1,7 +1,7 @@
 // Carrega arquivos injetando-os no html no site
 const site = document.getElementById('root')
 document.addEventListener('DOMContentLoaded', () => {
-    const URLComponentesIniciais = ['./components/header.html', './components/home.html', './components/footer.html']
+    const URLComponentesIniciais = ['components/header.html', 'components/home.html', 'components/footer.html']
     carregarComponente(URLComponentesIniciais, site)
 })
 
@@ -24,7 +24,7 @@ function configurarEventos() {
     const mainContent = document.getElementById('conteudoPrincipal')
     const botaoEntrar = document.getElementById('btnEntrar')
     const botaoRegistrar = document.getElementById('btnRegistrar')
-    const URLformularios = ['./components/loginComponent.html', './components/registerComponent.html']
+    const URLformularios = ['components/loginComponent.html', 'components/registerComponent.html']
 
     botaoEntrar.addEventListener('click', () => {
         fetch(URLformularios[0]).then(response => response.text()).then(html => 
