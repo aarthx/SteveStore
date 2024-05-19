@@ -16,3 +16,6 @@ Mencione as ferramentas que você usou para criar seu projeto
 Mencione todos aqueles que ajudaram a levantar o projeto desde o seu início
 
 * **Arthur** - *Front-end página principal* - [Arthur](https://github.com/aarthx)
+* **César** - *Front-end página principal* - [César](https://github.com/CesarLucasSB)
+* **João** - *Front-end página principal* - [João](https://github.com/PvmLucas)
+* **Raul** - *Front-end página principal* - [Raul](https://github.com/Raulzaozinho)
