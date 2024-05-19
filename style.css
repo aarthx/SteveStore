@@ -126,7 +126,7 @@ header {
 
 /* HOME */
 
-main {
+.conteudo {
     max-width: 100rem;
     margin: 0 auto;
 }
@@ -207,4 +207,53 @@ footer {
 .vantagens ul li p span {
     color: var(--secundary-color);
     font-weight: bold;
+}
+
+/* LoginComponent */
+
+#componente {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 10rem 0;
+}
+
+#componente h1 {
+    text-align: center;
+    color: var(--light-color);
+    font-size: 4rem;
+}
+
+.formulario {
+    background-color: var(--light-color);
+    border: 5px solid var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    padding: 3rem;
+    gap: 3rem;
+    font-size: 1.5rem;
+}
+
+.formulario input {
+    background-color: var(--light-color);
+    font-size: 2rem;
+    border: none;
+    border-bottom: 3px solid var(--dark-color);
+    padding: 1rem;
+}
+
+.formulario button {
+    background-color: var(--dark-color);
+    font-size: 2rem;
+    color: var(--light-color);
+    cursor: pointer;
+    padding: 0.5rem 0;
+}
+
+.formulario button:hover {
+    background-color: var(--primary-color);
+    transition: ease 0.2s;
+}
+
+.formulario p {
+    text-align: center;
 }
