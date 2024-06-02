@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Steve Store | Entrar</title>
     <link rel="stylesheet" href="../style.css">
-
 </head>
 <body>
     <header>
@@ -17,19 +16,20 @@
         <div></div>
         <nav>
             <ul class="nav-bar">
-                <li class="nav-menu-item">Masculinas</li>
-                <li class="nav-menu-item">Femininas</li>
+                <li class="nav-menu-item" id="roupasMasculinas">Masculinas</li>
+                <li class="nav-menu-item" id="roupasFemininas">Femininas</li>
                 <a href="./loginPage.html"><li class="nav-menu-account" id="btnEntrar">Entrar</li></a>
                 <a href="./registerPage.html"><li class="nav-menu-account register" id="btnRegistrar">Cadastre-se</li></a>
             </ul>
         </nav>
     </header>
     <main>
-        <div id="componente">
+        <div id="componente" class="componente">
             <h1>Login</h1>
             <form class="formulario" id="loginForm">
                 <input type="email" required name="email" placeholder="Digite o seu email">
                 <input type="password" required name="senha" placeholder="Digite a sua senha">
+                <div class="g-recaptcha" id="captcha" data-sitekey="6LcJKe8pAAAAABvNHTqVt2e0Nnz7CWxf9ViT-jGn"></div>
                 <button>Entrar</button>
                 <p><a href="">Esqueci minha senha</a></p>
             </form>

@@ -1,24 +1,42 @@
+function loadRecaptcha() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    script.defer = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+loadRecaptcha()
+
 //Adiciona eventos inicias
 const opcaoMasculinas = document.getElementById('roupasMasculinas')
 const opcaoFemininas = document.getElementById('roupasFemininas')
-opcaoMasculinas.addEventListener('click', carregaMasculinas)
-opcaoFemininas.addEventListener('click', carregaFemininas)
+if(opcaoMasculinas) opcaoMasculinas.addEventListener('click', carregaMasculinas)
+if(opcaoFemininas) opcaoFemininas.addEventListener('click', carregaFemininas)
+
 
 //Carrega Roupas do banco para o site - Codigo para index.html
 let listaRoupasBanco = []
 const roupasMostradas = document.querySelectorAll('.clothes > ul')
 const conteudo = document.getElementById("conteudo")
-if(roupasMostradas.length) {
-  try {
-    fetch('http://localhost:5000/roupas').then(response => response.json())
-    .then(data => {
-      listaRoupasBanco = data;
+const componente = document.getElementById("componente")
+try {
+  fetch('http://localhost:5000/roupas').then(response => response.json())
+  .then(data => {
+    listaRoupasBanco = data;
+  })
+  .then(() => {
+    if(roupasMostradas.length) {
       carregarRoupasDoBanco()
-    })
-  } catch(e) {
-    console.error('Erro ao buscar roupas:', error)
-  }
+    }
+  })
+} catch(e) {
+  console.error('Erro ao buscar roupas:', error)
 }
+
 function carregarRoupasDoBanco() {
   for(let i = 0; i < 8; i++) {
     itemLi = Array.from(roupasMostradas[0].children)[i]
@@ -46,9 +64,16 @@ function carregaMasculinas() {
   if(banner) {
     banner.remove()
   }
+  console.log(listaRoupasBanco)
   let roupasMasculinasBanco = listaRoupasBanco.filter(roupa => (roupa.genero === 'M'))
   //limpar conteudo atual
-  conteudo.innerHTML = `
+  if(componente) {
+    componente.classList.add('conteudo')
+    componente.classList.remove('componente')
+    componente.style.marginTop = '15rem'
+  } 
+  const quadroAtual = conteudo || componente
+  quadroAtual.innerHTML = `
   <div class="primary-bar"></div>
   <div class="clothes">
       <ul>
@@ -80,7 +105,13 @@ function carregaFemininas() {
   }
   let roupasFemininasBanco = listaRoupasBanco.filter(roupa => (roupa.genero === 'F'))
   //limpar conteudo atual
-  conteudo.innerHTML = `
+  const quadroAtual = conteudo || componente
+  if(componente) {
+    componente.classList.add('conteudo')
+    componente.classList.remove('componente')
+    componente.style.marginTop = '15rem'
+  } 
+  quadroAtual.innerHTML = `
   <div class="primary-bar"></div>
   <div class="clothes">
       <ul>
@@ -115,30 +146,38 @@ if(registerForm) {
   const testEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
   const testSenha = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/
 
-  // Obtém os dados do formulário
-  const formData = new FormData(registerForm);
-  const data = {};
-  formData.forEach((value, key) => {
-    data[key] = value;
-  });
-
-  //validações
-  let validaEmail = testEmail.test(data.email)
-  let validaSenha = testSenha.test(data.senha)
-  let senhasIguais = data.senha == data.senhaCon
-
-  if(!senhasIguais) {
-    alert('As senhas digitadas não são iguais!')
-    registerForm.reset()
-  } else if(!validaEmail) {
-    alert('Digite um email válido!')
-    registerForm.reset()
-  } else if(!validaSenha) {
-    alert('Digite uma senha válida e forte (minimo 8 caracteres, 1 caracter especial, 1 letra maiuscula e 1 letra minúscula e 1 número)!')
-    registerForm.reset()
+  var response = grecaptcha.getResponse();
+  if (response.length === 0) {
+      // Nenhuma resposta do reCAPTCHA
+      alert('Por favor preencha o reCAPTCHA');
   } else {
-    registraUsuarioNoBanco(data);
+    // Obtém os dados do formulário
+    const formData = new FormData(registerForm);
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+
+    //validações
+    let validaEmail = testEmail.test(data.email)
+    let validaSenha = testSenha.test(data.senha)
+    let senhasIguais = data.senha == data.senhaCon
+
+    if(!senhasIguais) {
+      alert('As senhas digitadas não são iguais!')
+      registerForm.reset()
+    } else if(!validaEmail) {
+      alert('Digite um email válido!')
+      registerForm.reset()
+    } else if(!validaSenha) {
+      alert('Digite uma senha válida e forte (minimo 8 caracteres, 1 caracter especial, 1 letra maiuscula e 1 letra minúscula e 1 número)!')
+      registerForm.reset()
+    } else {
+      registraUsuarioNoBanco(data);
+    }
   }
+
+  
   
   });
 }
@@ -170,13 +209,20 @@ if(loginForm) {
   loginForm.addEventListener('submit', event => {
   event.preventDefault(); 
 
-  const formData = new FormData(loginForm);
-  const data = {};
-  formData.forEach((value, key) => {
-    data[key] = value;
-  });
-  tentativaDeLogin(data);
+  var response = grecaptcha.getResponse();
+  if (response.length === 0) {
+      // Nenhuma resposta do reCAPTCHA
+      alert('Por favor preencha o reCAPTCHA');
+  } else {
 
+    const formData = new FormData(loginForm);
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+    tentativaDeLogin(data);
+    
+  }
   });
 }
 

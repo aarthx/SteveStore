@@ -229,13 +229,13 @@ footer {
 
 /* LoginComponent */
 
-#componente {
+.componente {
     max-width: 50rem;
     margin: 0 auto;
     padding: 10rem 0;
 }
 
-#componente h1 {
+.componente h1 {
     text-align: center;
     color: var(--light-color);
     font-size: 4rem;
