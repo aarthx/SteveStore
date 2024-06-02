@@ -24,7 +24,7 @@ body {
 header {
     background-color: var(--primary-color);
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     font-size: 2rem;
     position: fixed;
@@ -33,12 +33,19 @@ header {
     top: 0;
 }
 
-.search-bar {
-    background-color: var(--light-color);
-    display: flex;
-    justify-content: space-between;
-    border-radius: 5px;
-    color: #BBB;
+header > div {
+    height: 5px;
+    border-radius: 3px;
+    width: 10rem;
+    background-color: var(--secundary-color);
+}
+
+header > p {
+    color: var(--light-color);
+}
+
+header > a, header > nav {
+    margin: 0 3rem;
 }
 
 .search-bar > input {
@@ -61,6 +68,10 @@ header {
     list-style: none;
     justify-content: space-between;
     gap: 5rem;
+}
+
+.nav-bar a {
+    text-decoration: none;
 }
 
 .nav-bar li {
@@ -90,6 +101,11 @@ header {
 
 .nav-menu-account {
     color: var(--dark-color);
+}
+
+.nav-menu-account:hover {
+    color: var(--secundary-color);
+    transition: 0.5s;
 }
 
 .register {
@@ -163,8 +179,10 @@ header {
 }
 
 .clothes ul li img {
+    aspect-ratio: 1 / 1;
     max-width: 100%;
     border-radius: 0 20px 0 20px;
+    object-fit: cover;
 }
 
 .clothes ul li:hover img {

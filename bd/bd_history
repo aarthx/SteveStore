@@ -1,0 +1,57 @@
+CREATE TABLE Roupas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    preco REAL NOT NULL,
+    imageURL TEXT NOT NULL
+);
+
+CREATE TABLE Usuarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    senha TEXT NOT NULL,
+    carrinho_compras TEXT
+);
+
+CREATE TABLE HistoricoCompras (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_usuario INTEGER NOT NULL,
+    data_compra TEXT NOT NULL,
+    carrinho_compras TEXT NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id)
+);
+
+ALTER TABLE Roupas
+ADD COLUMN genero CHAR(1);
+
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa feminina religiosa', 41.99, 'https://i.ibb.co/V2TYb0b/clothes4.png', 'F');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa feminina vermelha', 35.00, 'https://i.ibb.co/tB5K0cw/clothes1.png', 'F');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa feminina azul', 26.00, 'https://i.ibb.co/SNJSsDd/clothes2.png', 'F');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa feminina anjo', 30.00, 'https://i.ibb.co/C6LTYNn/clothes3.png', 'F');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa feminina de inverno', 80.00, 'https://i.ibb.co/X3q0VQQ/clothes16.jpg', 'F');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa feminina listrada', 50.00, 'https://i.ibb.co/r7xrS4N/clothes15.jpg', 'F');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Casaco masculino', 150.00, 'https://i.ibb.co/tz0PNfT/clothes14.jpg', 'M');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa jeans masculina', 80.00, 'https://i.ibb.co/LPvQz8B/clothes7.jpg', 'M');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Camiseta masculina branca', 30.00, 'https://i.ibb.co/hWnFdc7/clothes6.jpg', 'M');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa masculina cinza', 130.00, 'https://i.ibb.co/prYf9H0/clothes5.jpg', 'M');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa jeans branca', 100.00, 'https://i.ibb.co/dG8PPKV/clothes13.jpg', 'M');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa de inverno verde', 75.50, 'https://i.ibb.co/0tR2KrX/clothes12.jpg', 'M');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa social masculina', 155.99, 'https://i.ibb.co/qpsc1rg/clothes11.jpg', 'M');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa feminina rosa', 100.99, 'https://i.ibb.co/wRR97sg/clothes10.jpg', 'F');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Conjunto feminino', 150.00, 'https://i.ibb.co/Hr0LpS9/clothes9.jpg', 'F');
+INSERT INTO Roupas (nome, preco, imageURL, genero)
+VALUES ('Roupa masculina de luxo', 199.99, 'https://i.ibb.co/8ctcmKy/clothes8.jpg', 'M');
