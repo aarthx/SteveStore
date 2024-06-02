@@ -2,6 +2,12 @@
 
 Site da loja de roupas Steve Store, projeto que utiliza a Fake Store API
 
+## 📜 Como testar
+
+Baixe o projeto completo e utilize o VSCode
+Nele você utilizará o Live Server para abrir o index.html e 
+abra o servidor em um terminal utilizando node server/main.js
+
 ## 🛠️ Construído com
 
 Mencione as ferramentas que você usou para criar seu projeto
