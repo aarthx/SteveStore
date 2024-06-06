@@ -7,7 +7,7 @@ Site da loja de roupas Steve Store, projeto que utiliza a Fake Store API
 Primeiro e necessário ter instalado:
   1. VSCode
   2. Node
-  3. Live Server (VSCode extension
+  3. Live Server (VSCode extension)
 
 Passo a passo:
   1. Baixe os arquivos pelo download zip do github
