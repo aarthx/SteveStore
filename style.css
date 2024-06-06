@@ -330,3 +330,9 @@ footer {
 .roupa-especifica .descricao button:hover {
     background-color: #28bb8f;
 }
+
+/* Estilos para usuario logado */
+
+.nav-bar > img {
+    cursor: pointer;
+}

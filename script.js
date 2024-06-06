@@ -1,3 +1,4 @@
+//Insere script para funcionando do ReCaptcha no front-end
 function loadRecaptcha() {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
@@ -11,11 +12,66 @@ function loadRecaptcha() {
 }
 loadRecaptcha()
 
+//Verifica se o usuário já está logado
+let userLogado = {}
+init();
+async function init() {
+  const token = localStorage.getItem('token');
+  if (token) {
+      try {
+          const data = await verificaLogado(token);
+          if(data.valid) {
+            userLogado = data.user;
+            console.log(userLogado)
+          } else {
+            console.error('Token inválido, logue novamente');
+            localStorage.removeItem('token')
+          }
+      } catch (e) {
+          console.error('Erro ao verificar token:', e);
+      }
+  }
+  if(userLogado.id) {
+    const nav = document.querySelector('header > nav');
+    nav.innerHTML = `
+    <ul class="nav-bar">
+      <li class="nav-menu-item" id="roupasMasculinas">Masculinas</li>
+      <li class="nav-menu-item" id="roupasFemininas">Femininas</li>
+      <li class="nav-menu-item" id="btnSair">Sair</li>
+      <img src="/assets/favorite.svg" alt="botão para acessar roupas curtidas">
+      <img src="/assets/kart2.svg" alt="botão para acessar carrinho e finalizar compras">
+    </ul>
+    `
+    const btnSair = document.getElementById('btnSair');
+    btnSair.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.reload();
+    })
+  }
+  adicionaEventosIniciais()
+}
+
+async function verificaLogado(token) {
+  const response = await fetch('http://localhost:5000/token', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(token)
+  });
+
+  const data = await response.json();
+  return data
+}
+
 //Adiciona eventos inicias
-const opcaoMasculinas = document.getElementById('roupasMasculinas')
-const opcaoFemininas = document.getElementById('roupasFemininas')
-if(opcaoMasculinas) opcaoMasculinas.addEventListener('click', () => carregaGenero('M'))
-if(opcaoFemininas) opcaoFemininas.addEventListener('click', () => carregaGenero('F'))
+function adicionaEventosIniciais() {
+  const opcaoMasculinas = document.getElementById('roupasMasculinas')
+  const opcaoFemininas = document.getElementById('roupasFemininas')
+  if(opcaoMasculinas) opcaoMasculinas.addEventListener('click', () => carregaGenero('M'))
+  if(opcaoFemininas) opcaoFemininas.addEventListener('click', () => carregaGenero('F'))
+}
 
 //Carrega Roupas do banco para o site - Codigo para index.html
 let listaRoupasBanco = []
@@ -211,7 +267,9 @@ function tentativaDeLogin(usuario) {
         alert(result.message)
         loginForm.reset()
       } else {
-        alert(result.message)
+        localStorage.setItem('token', result.token);
+        alert('Login bem-sucedido!');
+        window.location.href = '/';
       }
     })
   } catch(e) {
@@ -231,10 +289,10 @@ function carregaRoupaEspecifica(id, img, nome, preco) {
       <h1>${nome}</h1>
       <div class="preco">
         <h2>${formatarParaBRL(preco)}</h2>
-        <img src="./assets/favorite.svg" alt="botão de favoritar roupa">
+        <img src="/assets/favorite.svg" alt="botão de favoritar roupa">
       </div>
       <button roupa="${id}">
-        <img src="./assets/kart.svg" alt="ícone do carrinho">
+        <img src="/assets/kart.svg" alt="ícone do carrinho">
         <p>Adicionar ao carrinho</p>
       </button>
     </div>
