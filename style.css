@@ -275,3 +275,58 @@ footer {
 .formulario p {
     text-align: center;
 }
+
+/* Estilo para roupas especificas */
+
+.roupa-especifica {
+    margin: 15rem;
+    display: flex;
+    gap: 5rem;
+    color: var(--light-color);
+}
+
+.roupa-especifica > img {
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+    border-radius: 0 20px 0 20px;
+    object-fit: cover;
+}
+
+.roupa-especifica .descricao {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.roupa-especifica .descricao h1 {
+    font-size: 3rem;
+    font-weight: normal;
+}
+
+.roupa-especifica .descricao .preco {
+    display: flex;
+    gap: 1rem;
+    font-size: 3rem;
+}
+
+.roupa-especifica .descricao .preco > img {
+    cursor: pointer;
+}
+
+.roupa-especifica .descricao button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    background-color: var(--secundary-color);
+    border: none;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+.roupa-especifica .descricao button:hover {
+    background-color: #28bb8f;
+}

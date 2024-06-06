@@ -14,9 +14,8 @@ loadRecaptcha()
 //Adiciona eventos inicias
 const opcaoMasculinas = document.getElementById('roupasMasculinas')
 const opcaoFemininas = document.getElementById('roupasFemininas')
-if(opcaoMasculinas) opcaoMasculinas.addEventListener('click', carregaMasculinas)
-if(opcaoFemininas) opcaoFemininas.addEventListener('click', carregaFemininas)
-
+if(opcaoMasculinas) opcaoMasculinas.addEventListener('click', () => carregaGenero('M'))
+if(opcaoFemininas) opcaoFemininas.addEventListener('click', () => carregaGenero('F'))
 
 //Carrega Roupas do banco para o site - Codigo para index.html
 let listaRoupasBanco = []
@@ -38,12 +37,20 @@ try {
 }
 
 function carregarRoupasDoBanco() {
+
   for(let i = 0; i < 8; i++) {
     itemLi = Array.from(roupasMostradas[0].children)[i]
     roupaBanco = listaRoupasBanco[i]
     itemLi.innerHTML += `<img src="${roupaBanco.imageURL}" alt="${roupaBanco.nome}">
                                                               <p>${roupaBanco.nome}</p>
                                                               <h2>${formatarParaBRL(roupaBanco.preco)}</h2>`
+    
+    //Adiciona evento de click especifico para cada roupa usando um técnica de closure                                                         
+    itemLi.addEventListener('click', (function(roupa) {
+      return function() {
+        carregaRoupaEspecifica(roupa.id, roupa.imageURL, roupa.nome, roupa.preco);
+      };
+    })(roupaBanco));
   }
   for(let i = 8; i < 16; i++) {
     itemLi = Array.from(roupasMostradas[1].children)[i - 8]
@@ -51,6 +58,12 @@ function carregarRoupasDoBanco() {
     itemLi.innerHTML += `<img src="${roupaBanco.imageURL}" alt="${roupaBanco.nome}">
                                                               <p>${roupaBanco.nome}</p>
                                                               <h2>${formatarParaBRL(roupaBanco.preco)}</h2>`
+    //Adiciona evento de click especifico para cada roupa usando um técnica de closure                                                         
+    itemLi.addEventListener('click', (function(roupa) {
+      return function() {
+        carregaRoupaEspecifica(roupa.id, roupa.imageURL, roupa.nome, roupa.preco);
+      };
+    })(roupaBanco));
   }
 }
 function formatarParaBRL(valor) {
@@ -59,84 +72,42 @@ function formatarParaBRL(valor) {
     currency: 'BRL' 
   }).format(valor);
 }
-function carregaMasculinas() {
-  const banner = document.getElementById('banner')
-  if(banner) {
-    banner.remove()
-  }
-  console.log(listaRoupasBanco)
-  let roupasMasculinasBanco = listaRoupasBanco.filter(roupa => (roupa.genero === 'M'))
-  //limpar conteudo atual
-  if(componente) {
-    componente.classList.add('conteudo')
-    componente.classList.remove('componente')
-    componente.style.marginTop = '15rem'
-  } 
-  const quadroAtual = conteudo || componente
-  quadroAtual.innerHTML = `
-  <div class="primary-bar"></div>
-  <div class="clothes">
-      <ul>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-      </ul>
-  </div>
-  <div class="secundary-bar"></div>`
-  const roupasMasculinas = document.querySelector('.clothes > ul')
+function carregaGenero(genero) {
+  let roupasGeneroBanco = listaRoupasBanco.filter(roupa => (roupa.genero === genero))
+  const conteudoAtual = document.getElementById('conteudoPrincipal')
+  conteudoAtual.style.marginTop = '15rem'
+  conteudoAtual.innerHTML = `
+  <div class="conteudo" id="conteudo"> 
+    <div class="primary-bar"></div>
+    <div class="clothes">
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="secundary-bar"></div>
+  </div>`
+  const roupasGenero = document.querySelector('.clothes > ul')
   for(let i = 0; i < 8; i++) {
-    itemLi = Array.from(roupasMasculinas.children)[i]
-    roupaBanco = roupasMasculinasBanco[i]
+    itemLi = Array.from(roupasGenero.children)[i]
+    roupaBanco = roupasGeneroBanco[i]
     itemLi.innerHTML += `<img src="${roupaBanco.imageURL}" alt="${roupaBanco.nome}">
                                                               <p>${roupaBanco.nome}</p>
                                                               <h2>${formatarParaBRL(roupaBanco.preco)}</h2>`
+    //Adiciona evento de click especifico para cada roupa usando um técnica de closure                                                         
+    itemLi.addEventListener('click', (function(roupa) {
+      return function() {
+        carregaRoupaEspecifica(roupa.id, roupa.imageURL, roupa.nome, roupa.preco);
+      };
+    })(roupaBanco));
   }
-  conteudo.style.marginTop = '15rem'
 }
-function carregaFemininas() {
-  const banner = document.getElementById('banner')
-  if(banner) {
-    banner.remove()
-  }
-  let roupasFemininasBanco = listaRoupasBanco.filter(roupa => (roupa.genero === 'F'))
-  //limpar conteudo atual
-  const quadroAtual = conteudo || componente
-  if(componente) {
-    componente.classList.add('conteudo')
-    componente.classList.remove('componente')
-    componente.style.marginTop = '15rem'
-  } 
-  quadroAtual.innerHTML = `
-  <div class="primary-bar"></div>
-  <div class="clothes">
-      <ul>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-      </ul>
-  </div>
-  <div class="secundary-bar"></div>`
-  const roupasFemininas = document.querySelector('.clothes > ul')
-  for(let i = 0; i < 8; i++) {
-    itemLi = Array.from(roupasFemininas.children)[i]
-    roupaBanco = roupasFemininasBanco[i]
-    itemLi.innerHTML += `<img src="${roupaBanco.imageURL}" alt="${roupaBanco.nome}">
-                                                              <p>${roupaBanco.nome}</p>
-                                                              <h2>${formatarParaBRL(roupaBanco.preco)}</h2>`
-  }
-  conteudo.style.marginTop = '15rem'
-}
-
 
 //Lida com formulario de registro - Código para registerPage.html
 const registerForm = document.getElementById('registerForm')
@@ -225,7 +196,6 @@ if(loginForm) {
   }
   });
 }
-
 function tentativaDeLogin(usuario) {
   try {
     fetch('http://localhost:5000/login', {
@@ -248,4 +218,26 @@ function tentativaDeLogin(usuario) {
     console.error('Erro:', e);
     alert('Ocorreu um erro ao enviar a mensagem.');
   }
+}
+
+//Lida com as páginas específicas de cada roupa
+function carregaRoupaEspecifica(id, img, nome, preco) {
+  const conteudoAtual = document.getElementById('conteudoPrincipal')
+  conteudoAtual.innerHTML = 
+  `
+  <div roupa="${id}" class="roupa-especifica">
+    <img src="${img}" alt="${nome}">
+    <div class="descricao">
+      <h1>${nome}</h1>
+      <div class="preco">
+        <h2>${formatarParaBRL(preco)}</h2>
+        <img src="./assets/favorite.svg" alt="botão de favoritar roupa">
+      </div>
+      <button roupa="${id}">
+        <img src="./assets/kart.svg" alt="ícone do carrinho">
+        <p>Adicionar ao carrinho</p>
+      </button>
+    </div>
+  </div>
+  `
 }
