@@ -22,6 +22,7 @@ async function init() {
           const data = await verificaLogado(token);
           if(data.valid) {
             userLogado = data.user;
+            userLogado.favoritas = JSON.parse(userLogado.favoritas);
             console.log(userLogado)
           } else {
             console.error('Token inválido, logue novamente');
@@ -32,23 +33,38 @@ async function init() {
       }
   }
   if(userLogado.id) {
-    const nav = document.querySelector('header > nav');
-    nav.innerHTML = `
-    <ul class="nav-bar">
-      <li class="nav-menu-item" id="roupasMasculinas">Masculinas</li>
-      <li class="nav-menu-item" id="roupasFemininas">Femininas</li>
-      <li class="nav-menu-item" id="btnSair">Sair</li>
-      <img src="/assets/favorite.svg" alt="botão para acessar roupas curtidas">
-      <img src="/assets/kart2.svg" alt="botão para acessar carrinho e finalizar compras">
-    </ul>
-    `
-    const btnSair = document.getElementById('btnSair');
-    btnSair.addEventListener('click', () => {
-      localStorage.removeItem('token');
-      window.location.reload();
-    })
+    carregaNavBarLogado();
   }
   adicionaEventosIniciais()
+
+  const currentPath = window.location.pathname;
+  if (currentPath.includes("loginPage.html") || currentPath.includes("registerPage.html")) {
+    if(userLogado.id) {
+      // Se o usuário estiver logado e estiver na página de login ou registro, redirecionar para a página principal
+      window.location.href = "/";
+    }
+  }
+
+}
+
+function carregaNavBarLogado() {
+  const nav = document.querySelector('header > nav');
+  nav.innerHTML = `
+  <ul class="nav-bar">
+    <li class="nav-menu-item" id="roupasMasculinas">Masculinas</li>
+    <li class="nav-menu-item" id="roupasFemininas">Femininas</li>
+    <li class="nav-menu-item" id="btnSair">Sair</li>
+    <img src="/assets/favorite.svg" id="btnListaDesejos" alt="botão para acessar roupas curtidas">
+    <img src="/assets/kart2.svg" alt="botão para acessar carrinho e finalizar compras">
+  </ul>
+  `
+  const btnSair = document.getElementById('btnSair');
+  btnSair.addEventListener('click', () => {
+    localStorage.removeItem('token');
+    window.location.reload();
+  })
+  const btnListaDesejos = document.getElementById('btnListaDesejos')
+  btnListaDesejos.addEventListener('click', () => carregarListaDesejos(userLogado.id))
 }
 
 async function verificaLogado(token) {
@@ -298,4 +314,43 @@ function carregaRoupaEspecifica(id, img, nome, preco) {
     </div>
   </div>
   `
+}
+
+//Página de lista de desejos
+function carregarListaDesejos(userID) {
+  const conteudoAtual = document.getElementById('conteudoPrincipal')
+  conteudoAtual.style = ''
+  conteudoAtual.innerHTML = 
+  `
+  <div class="componente">
+    <h1>Lista de desejos</h1>
+    <div class="desejos-box" id="desejosBox">
+
+    </div>
+  </div>
+  `
+  const caixaRoupasCurtidas = document.getElementById('desejosBox')
+  userLogado.favoritas.forEach(id => {
+    let {imageURL, nome, preco} =  listaRoupasBanco[id]
+    caixaRoupasCurtidas.innerHTML += 
+    `
+    <div class="desejos-box-roupa" roupa="${id}">
+      <img src="${imageURL}" alt="${nome}">
+      <div class="descricao-desejos">
+        <h1>${nome}</h1>
+        <div class="preco">
+          <h2>${formatarParaBRL(preco)}</h2>
+        </div>
+        <div>
+          <button roupa="${id}">
+            <img src="/assets/kart.svg" alt="ícone do carrinho">
+          </button>
+          <button roupa="${id}">
+            <p>Remover</p>
+          </button>
+        </div>
+      </div>
+    </div>
+    `
+  })
 }

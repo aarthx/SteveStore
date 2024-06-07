@@ -241,7 +241,7 @@ footer {
     font-size: 4rem;
 }
 
-.formulario {
+.formulario, .desejos-box {
     background-color: var(--light-color);
     border: 5px solid var(--primary-color);
     display: flex;
@@ -335,4 +335,16 @@ footer {
 
 .nav-bar > img {
     cursor: pointer;
+}
+
+/* Estilos para lista de desejos */
+
+.desejos-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.desejos-box .desejos-box-roupa {
+    display: ;
 }
