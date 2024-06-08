@@ -55,3 +55,5 @@ INSERT INTO Roupas (nome, preco, imageURL, genero)
 VALUES ('Conjunto feminino', 150.00, 'https://i.ibb.co/Hr0LpS9/clothes9.jpg', 'F');
 INSERT INTO Roupas (nome, preco, imageURL, genero)
 VALUES ('Roupa masculina de luxo', 199.99, 'https://i.ibb.co/8ctcmKy/clothes8.jpg', 'M');
+
+UPDATE usuarios SET carrinho_compras = '[1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,10,12,1,2,3,4,5,6,7]' WHERE id = 1;
