@@ -2,12 +2,13 @@ const http = require('http');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 const caminhoBanco = path.join(__dirname, '../bd/banco.sqlite3');
 const banco = new sqlite3.Database(caminhoBanco, sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
     console.error('Erro ao abrir o banco de dados', err.message);
   } else {
-    console.log('Conectado ao banco de dados SQLite');
+    console.log('Conectado ao banco de dados SQLite3');
   }
 });
 
@@ -115,13 +116,76 @@ const servidor = http.createServer(function (req, res) {
             res.statusCode = 200;
             res.end(JSON.stringify({ valid: true, user: req.usuario }));
         });
+    } else if(req.url === '/usuario/kart' && req.method === 'POST') {
+      
+      let body = '';
+      req.on('data', chunk => {
+          body += chunk.toString(); // Concatena os dados recebidos
+      });
+
+      req.on('end', async () => {
+        const {userKart} = JSON.parse(body); 
+          try {
+            authenticateToken(req, res, async () => {
+              res.statusCode = 200;
+              await editarUsuario(req.usuario.id, 'carrinho_compras', JSON.stringify(userKart))
+              res.end(JSON.stringify({ok: true, message: 'carrinho editado' }));
+            })
+          } catch (err) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Dados inválidos' }));
+          }
+      });
+      
+    } else if(req.url === '/usuario/desejo' && req.method === 'POST') {
+      
+      let body = '';
+      req.on('data', chunk => {
+          body += chunk.toString();
+      });
+
+      req.on('end', async () => {
+        const {userCurtidas} = JSON.parse(body); 
+          try {
+            authenticateToken(req, res, async () => {
+              res.statusCode = 200;
+              await editarUsuario(req.usuario.id, 'roupas_curtidas', JSON.stringify(userCurtidas))
+              res.end(JSON.stringify({ok: true, message: 'lista de desejo editada' }));
+            })
+          } catch (err) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Dados inválidos' }));
+          }
+      });
+      
+    } else if(req.url === '/usuario/kart/finalizar' && req.method === 'POST') {
+      
+      let body = '';
+      req.on('data', chunk => {
+          body += chunk.toString(); // Concatena os dados recebidos
+      });
+
+      req.on('end', async () => {
+        const {userKart} = JSON.parse(body); 
+          try {
+            authenticateToken(req, res, async () => {
+              res.statusCode = 200;
+              await finalizarCompra(req.usuario.id, JSON.stringify(userKart))
+              await editarUsuario(req.usuario.id, 'carrinho_compras', JSON.stringify([]))
+              res.end(JSON.stringify({ok: true, message: 'carrinho editado' }));
+            })
+          } catch (err) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Dados inválidos' }));
+          }
+      });
+      
     }
 })
 
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-
     if (!token) {
         res.writeHead(401, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({valid: false, error: 'Token não fornecido' }));
@@ -129,11 +193,13 @@ function authenticateToken(req, res, next) {
     }
     
     jwt.verify(token, secretKey, async (err, user) => {
+
         if (err) {
           res.writeHead(403, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({valid: false, error: 'Token inválido' }));
           return;
         }
+
         let userDB =  await procuraUsuarioPorEmail(user.email)
         req.user = user;
         req.usuario = {
@@ -141,6 +207,7 @@ function authenticateToken(req, res, next) {
             carrinho: userDB.carrinho_compras,
             favoritas: userDB.roupas_curtidas
         }
+
         next();
     });
 }
@@ -165,4 +232,42 @@ async function procuraUsuarioPorEmail(email) {
     }
 }
 
-servidor.listen(5000, () => console.log("Servidor da SteveStore ligado"))
+async function editarUsuario(userID , campo, novoValor) {
+  const sql = `UPDATE usuarios SET ${campo} = ? WHERE id = ?`;
+    try {
+      await new Promise((resolve, reject) => {
+        banco.run(sql, [novoValor, userID], function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+      
+    } catch (error) {
+      console.error(error)
+      throw new Error('Erro ao buscar usuário:', error.message);
+    }
+}
+
+async function finalizarCompra(id, userKart) {
+  const sql = 'INSERT INTO HistoricoCompras (id_usuario, data_compra, carrinho_compras) VALUES (?,?,?);'
+  try {
+    await new Promise((resolve, reject) => {
+      banco.run(sql, [id, moment().format('DD-MM-YYYY HH:mm:ss') , JSON.stringify(userKart)], function(err) {
+          if (err) {
+              reject(err);
+          } else {
+              resolve();
+          }
+      });
+  });
+    
+  } catch (error) {
+    console.error(error)
+    throw new Error('Erro ao buscar usuário:', error.message);
+  }
+}
+
+servidor.listen(5000, () => console.log("Servidor da SteveStore ligado em localhost:5000"))

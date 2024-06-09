@@ -14,8 +14,60 @@ loadRecaptcha()
 
 //Verifica se o usuário já está logado
 let userLogado = {}
-init();
-async function init() {
+
+document.addEventListener('DOMContentLoaded', async (e) => {
+  await testaToken()
+  let acao = localStorage.getItem('acao')
+
+  if(userLogado.id) {
+    carregaNavBarLogado();
+  }
+  if(acao == 'removercarrinho') {
+    carregarCarrinho(userLogado.id)
+    showSnackbar("Roupa removida do carrinho!", 'red', 'white')
+
+    localStorage.setItem('acao', '')
+  }
+  if(acao.startsWith('addroupa')) {
+    let acaoDividida = acao.split('-')
+    if(acaoDividida.length === 3) {
+      let {id, imageURL, nome, preco} = listaRoupasBanco[acaoDividida[2] - 1]
+      carregaRoupaEspecifica(id, imageURL, nome, preco)
+      showSnackbar("Roupa adicionada ao carrinho", 'green', 'black')
+      
+      localStorage.setItem('acao', '')
+    } else {
+      carregarListaDesejos(userLogado.id)
+      showSnackbar("roupa adicionada ao carrinho", "green", "black")
+      localStorage.setItem('acao', '')
+    }
+  }
+  if(acao.startsWith('adddesejo')) {
+    let acaoDividida = acao.split('-')
+    let {id, imageURL, nome, preco} = listaRoupasBanco[acaoDividida[1] - 1]
+    carregaRoupaEspecifica(id, imageURL, nome, preco)
+    showSnackbar("Roupa adicionada a lista de desejos", 'green', 'black')
+
+    localStorage.setItem('acao', '')
+  }
+  if(acao === "removerdesejos") {
+    carregarListaDesejos();
+    showSnackbar("Roupa removida a lista de desejos", 'green', 'black')
+
+    localStorage.setItem('acao', '')
+  }
+  if(acao === "comprafinalizada") {
+    carregarCarrinho(userLogado.id)
+    showSnackbar("Compra finalizada, obrigado e volte sempre!", 'green', 'black')
+
+    localStorage.setItem('acao', '')
+  }
+  adicionaEventosIniciais()
+  adicionaRedirecionamento()
+  
+})
+
+async function testaToken() {
   const token = localStorage.getItem('token');
   if (token) {
       try {
@@ -23,20 +75,19 @@ async function init() {
           if(data.valid) {
             userLogado = data.user;
             userLogado.favoritas = JSON.parse(userLogado.favoritas);
-            console.log(userLogado)
+            userLogado.carrinho = JSON.parse(userLogado.carrinho);
           } else {
             console.error('Token inválido, logue novamente');
             localStorage.removeItem('token')
+            localStorage.removeItem('user')
           }
       } catch (e) {
           console.error('Erro ao verificar token:', e);
       }
   }
-  if(userLogado.id) {
-    carregaNavBarLogado();
-  }
-  adicionaEventosIniciais()
+}
 
+function adicionaRedirecionamento() {
   const currentPath = window.location.pathname;
   if (currentPath.includes("loginPage.html") || currentPath.includes("registerPage.html")) {
     if(userLogado.id) {
@@ -44,7 +95,6 @@ async function init() {
       window.location.href = "/";
     }
   }
-
 }
 
 function carregaNavBarLogado() {
@@ -55,16 +105,19 @@ function carregaNavBarLogado() {
     <li class="nav-menu-item" id="roupasFemininas">Femininas</li>
     <li class="nav-menu-item" id="btnSair">Sair</li>
     <img src="/assets/favorite.svg" id="btnListaDesejos" alt="botão para acessar roupas curtidas">
-    <img src="/assets/kart2.svg" alt="botão para acessar carrinho e finalizar compras">
+    <img src="/assets/kart2.svg" id="btnListaCarrinho" alt="botão para acessar carrinho e finalizar compras">
   </ul>
   `
   const btnSair = document.getElementById('btnSair');
   btnSair.addEventListener('click', () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     window.location.reload();
   })
   const btnListaDesejos = document.getElementById('btnListaDesejos')
   btnListaDesejos.addEventListener('click', () => carregarListaDesejos(userLogado.id))
+  const btnListaCarrinho = document.getElementById('btnListaCarrinho')
+  btnListaCarrinho.addEventListener('click', () => carregarCarrinho(userLogado.id))
 }
 
 async function verificaLogado(token) {
@@ -305,33 +358,45 @@ function carregaRoupaEspecifica(id, img, nome, preco) {
       <h1>${nome}</h1>
       <div class="preco">
         <h2>${formatarParaBRL(preco)}</h2>
-        <img src="/assets/favorite.svg" alt="botão de favoritar roupa">
+        <img src="/assets/favorite.svg" alt="botão de favoritar roupa" id="adicionarAFavoritos" roupa="${id}">
       </div>
-      <button roupa="${id}">
-        <img src="/assets/kart.svg" alt="ícone do carrinho">
+      <button roupa="${id}" id="btnRoupaCarrinho">
+        <img src="/assets/kart.svg" alt="ícone do carrinho" >
         <p>Adicionar ao carrinho</p>
       </button>
     </div>
+    <div id="snackbar"></div>
   </div>
   `
+  const btnRoupaCarrinho = document.getElementById('btnRoupaCarrinho')
+  btnRoupaCarrinho.addEventListener('click', async () => {
+    let roupaID = btnRoupaCarrinho.getAttribute('roupa')
+    await adicionaRoupaCarrinho(userLogado.carrinho, roupaID, 'especifica')
+  })
+  const adicionarAFavoritos = document.getElementById('adicionarAFavoritos')
+  adicionarAFavoritos.addEventListener('click', async () => {
+    let roupaID = adicionarAFavoritos.getAttribute('roupa')
+    await adicionaRoupaDesejos(userLogado.favoritas, roupaID)
+  })
 }
 
 //Página de lista de desejos
-function carregarListaDesejos(userID) {
+function carregarListaDesejos() {
   const conteudoAtual = document.getElementById('conteudoPrincipal')
   conteudoAtual.style = ''
   conteudoAtual.innerHTML = 
   `
-  <div class="componente">
+  <div class="componente-lista-desejos">
     <h1>Lista de desejos</h1>
     <div class="desejos-box" id="desejosBox">
-
+      
     </div>
+    <div id="snackbar"></div>
   </div>
   `
   const caixaRoupasCurtidas = document.getElementById('desejosBox')
-  userLogado.favoritas.forEach(id => {
-    let {imageURL, nome, preco} =  listaRoupasBanco[id]
+  userLogado.favoritas.forEach(roupaID => {
+    let {id, imageURL, nome, preco} =  listaRoupasBanco[roupaID - 1]
     caixaRoupasCurtidas.innerHTML += 
     `
     <div class="desejos-box-roupa" roupa="${id}">
@@ -341,11 +406,11 @@ function carregarListaDesejos(userID) {
         <div class="preco">
           <h2>${formatarParaBRL(preco)}</h2>
         </div>
-        <div>
-          <button roupa="${id}">
+        <div class="btn-desejo">
+          <button class="btn-kart" roupa="${id}" id="addRoupaCarrinho">
             <img src="/assets/kart.svg" alt="ícone do carrinho">
           </button>
-          <button roupa="${id}">
+          <button class="btn-remove desejos" roupa="${id}">
             <p>Remover</p>
           </button>
         </div>
@@ -353,4 +418,215 @@ function carregarListaDesejos(userID) {
     </div>
     `
   })
+  const btnKart = document.querySelectorAll('.btn-kart')
+  btnKart.forEach(btnKartRoupa => {
+    btnKartRoupa.addEventListener('click', async () => {
+      let roupaID = btnKartRoupa.getAttribute('roupa')
+      adicionaRoupaCarrinho(userLogado.carrinho, roupaID, 'desejo')
+    })
+  })
+  const botoesRemoverDesejos = document.querySelectorAll('.btn-remove.desejos')
+  botoesRemoverDesejos.forEach(botao => {
+    botao.addEventListener('click', async () => {
+      let roupaID = botao.getAttribute('roupa')
+      await removeRoupaDesejos(userLogado.favoritas, roupaID)
+
+    })
+  })
+
+}
+
+async function removeRoupaDesejos(userCurtidas, roupaID) {
+  localStorage.setItem('acao', 'removerdesejos')
+  roupaID = Number(roupaID)
+  let indexDaRoupa = userCurtidas.indexOf(roupaID);
+  
+  if (indexDaRoupa !== -1) {
+    userCurtidas.splice(indexDaRoupa, 1);
+  }
+  await atualizaDesejos(userCurtidas)
+}
+async function adicionaRoupaDesejos(userCurtidas, roupaID) {
+  
+  localStorage.setItem('acao', `adddesejo-${roupaID}`)
+  roupaID = Number(roupaID)
+  if(!userCurtidas.includes(roupaID)) {
+    userCurtidas.push(roupaID);
+    await atualizaDesejos(userCurtidas)
+  } else {
+    showSnackbar("Roupa já esta na lista de desejos", 'red', 'white')
+  }
+}
+
+//Página de carrinho
+function carregarCarrinho(userID) {
+
+  const conteudoAtual = document.getElementById('conteudoPrincipal')
+  conteudoAtual.style = ''
+  conteudoAtual.innerHTML = 
+  `
+  <div class="componente-lista-desejos" id="paginaCarrinho">
+    <h1>Carrinho</h1>
+    <div class="desejos-box" id="desejosBox">
+      
+    </div>
+  </div>
+  `
+  const caixaRoupasCurtidas = document.getElementById('desejosBox')
+  userLogado.carrinho.forEach(id => {
+    let {imageURL, nome, preco} =  listaRoupasBanco[id - 1]
+    caixaRoupasCurtidas.innerHTML += 
+    `
+    <div class="desejos-box-roupa" roupa="${id}">
+      <img src="${imageURL}" alt="${nome}">
+      <div class="descricao-desejos">
+        <h1>${nome}</h1>
+        <div class="preco">
+          <h2>${formatarParaBRL(preco)}</h2>
+        </div>
+        <div class="btn-desejo">
+          <button class="btn-remove" roupa="${id}">
+            <p>Remover do carrinho</p>
+          </button>
+        </div>
+      </div>
+    </div>
+    `
+  })
+  caixaRoupasCurtidas.innerHTML += 
+  `
+  <button class="btn-finalizar" roupas="${userID.carrinho}" usuario="${userID}">
+    <p>Finalizar Compra</p>
+    <div id="snackbar"></div>
+  </button>
+  `
+  adicionarEventosCarrinho(userID);
+}
+function adicionarEventosCarrinho() {
+  // Adicionar eventos de clique para todos os botões de remover
+  const btnsRemoverCarrinho = document.querySelectorAll('.btn-remove');
+  btnsRemoverCarrinho.forEach(button => {
+    button.addEventListener('click', async (e) => {
+    e.preventDefault(); // Prevenir o comportamento padrão de envio do formulário
+    const roupaId = button.getAttribute('roupa');
+    await removeRoupaCarrinho(userLogado.carrinho, roupaId);
+
+    });
+  });
+
+  // Adicionar evento de clique para o botão de finalizar compra
+  const btnFinalizarCompra = document.querySelector('.btn-finalizar');
+  btnFinalizarCompra.addEventListener('click', async () => {
+    if(userLogado.carrinho.length >= 1) {
+      await finalizaCompra(userLogado.carrinho)
+      userLogado.carrinho = []
+      localStorage.setItem('acao', 'comprafinalizada')
+      await atualizaCarrinho(userLogado.carrinho)
+
+    } else {
+      showSnackbar("Adicione pelo menos um item no carrinho", 'red', 'white')
+    }
+  });
+
+}
+
+async function finalizaCompra(userKart) {
+  let token = localStorage.getItem('token')
+  try {
+    const response = await fetch(`http://localhost:5000/usuario/kart/finalizar`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userKart }),
+    });
+
+    if (!response.ok) {
+        throw new Error('Erro na requisição: ' + response.statusText);
+    }
+
+    const data = await response.json();
+  } catch (error) {
+      console.error('Erro ao atualizar o carrinho:', error);
+  }
+}
+
+async function removeRoupaCarrinho(userKart, roupaID) {
+  localStorage.setItem('acao', 'removercarrinho')
+  roupaID = Number(roupaID)
+  let indexDaRoupa = userKart.indexOf(roupaID);
+  
+  if (indexDaRoupa !== -1) {
+    userKart.splice(indexDaRoupa, 1);
+  }
+  await atualizaCarrinho(userKart)
+}
+async function adicionaRoupaCarrinho(userKart, roupaID, local) {
+  if(local === 'especifica') {
+    localStorage.setItem('acao', `addroupa-${local}-${roupaID}`)
+  } else if(local === 'desejo') {
+    localStorage.setItem('acao', `addroupa-${local}`)
+  }
+  roupaID = Number(roupaID)
+  userKart.push(roupaID);
+  await atualizaCarrinho(userKart)
+}
+async function atualizaCarrinho(userKart) {
+  let token = localStorage.getItem('token')
+  try {
+    const response = await fetch(`http://localhost:5000/usuario/kart`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userKart }),
+    });
+
+    if (!response.ok) {
+        throw new Error('Erro na requisição: ' + response.statusText);
+    }
+
+    const data = await response.json();
+  } catch (error) {
+      console.error('Erro ao atualizar o carrinho:', error);
+  }
+}
+async function atualizaDesejos(userCurtidas) {
+  let token = localStorage.getItem('token')
+  try {
+    const response = await fetch(`http://localhost:5000/usuario/desejo`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userCurtidas }),
+    });
+
+    if (!response.ok) {
+        throw new Error('Erro na requisição: ' + response.statusText);
+    }
+
+    const data = await response.json();
+  } catch (error) {
+      console.error('Erro ao atualizar o carrinho:', error);
+  }
+}
+
+// Evento do snackBar
+function showSnackbar(texto, corFundo, corTexto) {
+  // Pegue o elemento Snackbar
+  var snackbar = document.getElementById("snackbar");
+  snackbar.innerText = texto;
+  snackbar.style.backgroundColor = corFundo;
+  snackbar.style.color = corTexto;
+  // Adicione a classe "show" ao Snackbar
+  snackbar.className = "show";
+
+  // Após 3 segundos, remova a classe "show" do Snackbar
+  setTimeout(function() {
+    snackbar.className = snackbar.className.replace("show", "");
+  }, 3000);
 }
