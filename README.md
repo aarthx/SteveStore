@@ -24,7 +24,6 @@ Mencione as ferramentas que você usou para criar seu projeto
 * [CSS](https://developer.mozilla.org/pt-BR/docs/Web/CSS) - Linguagem de estilo
 * [JavaScipt](https://www.javascript.com/) - Linguagem de programação
 * [SQLite](https://sqlite.org/) - Banco de dados SQL pequeno, rápido e auto contido
-* [Fake Store API](https://fakestoreapi.com/) - Fake store rest API para e-comerce e prototipagem de website de loja
 
 ## ✒️ Autores
 
