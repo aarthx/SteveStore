@@ -26,7 +26,9 @@ document.addEventListener('redirect', async () => {
 async function redirecionaPaginas() {
   await testaToken()
   let acao = localStorage.getItem('acao')
-  
+  if(acao === null) {
+    acao = '';
+  }
   if(userLogado.id) {
     carregaNavBarLogado();
     adicionaRedirecionamento()
