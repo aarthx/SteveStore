@@ -15,14 +15,25 @@ loadRecaptcha()
 //Verifica se o usuário já está logado
 let userLogado = {}
 
-document.addEventListener('DOMContentLoaded', async (e) => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await redirecionaPaginas();
+})
+
+document.addEventListener('redirect', async () => {
+  await redirecionaPaginas();
+})
+
+async function redirecionaPaginas() {
   await testaToken()
   let acao = localStorage.getItem('acao')
-
+  
   if(userLogado.id) {
     carregaNavBarLogado();
+    adicionaRedirecionamento()
+  } else {
+    adicionaEventosIniciais()
   }
-  if(acao == 'removercarrinho') {
+  if(acao === 'removercarrinho') {
     carregarCarrinho(userLogado.id)
     showSnackbar("Roupa removida do carrinho!", 'red', 'white')
 
@@ -62,10 +73,8 @@ document.addEventListener('DOMContentLoaded', async (e) => {
 
     localStorage.setItem('acao', '')
   }
-  adicionaEventosIniciais()
-  adicionaRedirecionamento()
   
-})
+}
 
 async function testaToken() {
   const token = localStorage.getItem('token');
@@ -92,9 +101,16 @@ function adicionaRedirecionamento() {
   if (currentPath.includes("loginPage.html") || currentPath.includes("registerPage.html")) {
     if(userLogado.id) {
       // Se o usuário estiver logado e estiver na página de login ou registro, redirecionar para a página principal
-      window.location.href = "/";
+      redirectTo("/index.html");
     }
   }
+}
+
+//Cria função de redirecionamento para trata-lo como evento
+function redirectTo(url) {
+  const redirectEvent = new Event('redirect');
+  window.location.href = url;
+  document.dispatchEvent(redirectEvent);
 }
 
 function carregaNavBarLogado() {
@@ -108,6 +124,7 @@ function carregaNavBarLogado() {
     <img src="/assets/kart2.svg" id="btnListaCarrinho" alt="botão para acessar carrinho e finalizar compras">
   </ul>
   `
+  adicionaEventosIniciais()
   const btnSair = document.getElementById('btnSair');
   btnSair.addEventListener('click', () => {
     localStorage.removeItem('token');
@@ -136,6 +153,7 @@ async function verificaLogado(token) {
 
 //Adiciona eventos inicias
 function adicionaEventosIniciais() {
+
   const opcaoMasculinas = document.getElementById('roupasMasculinas')
   const opcaoFemininas = document.getElementById('roupasFemininas')
   if(opcaoMasculinas) opcaoMasculinas.addEventListener('click', () => carregaGenero('M'))
@@ -232,6 +250,7 @@ function carregaGenero(genero) {
       };
     })(roupaBanco));
   }
+  
 }
 
 //Lida com formulario de registro - Código para registerPage.html
@@ -338,7 +357,7 @@ function tentativaDeLogin(usuario) {
       } else {
         localStorage.setItem('token', result.token);
         alert('Login bem-sucedido!');
-        window.location.href = '/';
+        redirectTo("/index.html");
       }
     })
   } catch(e) {
@@ -370,8 +389,12 @@ function carregaRoupaEspecifica(id, img, nome, preco) {
   `
   const btnRoupaCarrinho = document.getElementById('btnRoupaCarrinho')
   btnRoupaCarrinho.addEventListener('click', async () => {
-    let roupaID = btnRoupaCarrinho.getAttribute('roupa')
-    await adicionaRoupaCarrinho(userLogado.carrinho, roupaID, 'especifica')
+    if(userLogado.id) {
+      let roupaID = btnRoupaCarrinho.getAttribute('roupa')
+      await adicionaRoupaCarrinho(userLogado.carrinho, roupaID, 'especifica')
+    } else {
+      redirectTo('./pages/loginPage.html');
+    }
   })
   const adicionarAFavoritos = document.getElementById('adicionarAFavoritos')
   adicionarAFavoritos.addEventListener('click', async () => {
@@ -379,6 +402,18 @@ function carregaRoupaEspecifica(id, img, nome, preco) {
     await adicionaRoupaDesejos(userLogado.favoritas, roupaID)
   })
 }
+
+//Redirects vindo das paginas de login e registro
+window.onload = function() {
+  if (localStorage.getItem('carregarGenero') === 'M') {
+      localStorage.removeItem('carregarGenero');
+      carregaGenero('M');
+  } else if(localStorage.getItem('carregarGenero') === 'F') {
+      localStorage.removeItem('carregarGenero');
+      carregaGenero('F');
+  }
+}
+
 
 //Página de lista de desejos
 function carregarListaDesejos() {
@@ -435,7 +470,6 @@ function carregarListaDesejos() {
   })
 
 }
-
 async function removeRoupaDesejos(userCurtidas, roupaID) {
   localStorage.setItem('acao', 'removerdesejos')
   roupaID = Number(roupaID)
@@ -529,7 +563,6 @@ function adicionarEventosCarrinho() {
   });
 
 }
-
 async function finalizaCompra(userKart) {
   let token = localStorage.getItem('token')
   try {
@@ -551,7 +584,6 @@ async function finalizaCompra(userKart) {
       console.error('Erro ao atualizar o carrinho:', error);
   }
 }
-
 async function removeRoupaCarrinho(userKart, roupaID) {
   localStorage.setItem('acao', 'removercarrinho')
   roupaID = Number(roupaID)
