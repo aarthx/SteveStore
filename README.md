@@ -18,7 +18,7 @@ Passo a passo:
 
 ## 🛠️ Construído com
 
-Mencione as ferramentas que você usou para criar seu projeto
+Ferramentas utilizadas para criar o projeto
 
 * [HTML](https://developer.mozilla.org/pt-BR/docs/Web/HTML) - Linguagem de marcação
 * [CSS](https://developer.mozilla.org/pt-BR/docs/Web/CSS) - Linguagem de estilo
@@ -27,9 +27,9 @@ Mencione as ferramentas que você usou para criar seu projeto
 
 ## ✒️ Autores
 
-Mencione todos aqueles que ajudaram a levantar o projeto desde o seu início
+Membros da equipe
 
-* **Arthur** - *Front-end página principal* - [Arthur](https://github.com/aarthx)
-* **César** - *Front-end página principal* - [César](https://github.com/CesarLucasSB)
-* **João** - *Front-end página principal* - [João](https://github.com/PvmLucas)
-* **Raul** - *Front-end página principal* - [Raul](https://github.com/Raulzaozinho)
+* **Arthur** - [Arthur](https://github.com/aarthx)
+* **César** - [César](https://github.com/CesarLucasSB)
+* **João** - [João](https://github.com/PvmLucas)
+* **Raul** - [Raul](https://github.com/Raulzaozinho)
