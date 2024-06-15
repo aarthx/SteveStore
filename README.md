@@ -1,6 +1,6 @@
 # Steve Store
 
-Site da loja de roupas Steve Store, projeto que utiliza a Fake Store API
+Site da loja de roupas Steve Store, projeto de um site de roupas com requisições API para SQLite e ReCaptchaV2
 
 ## 📜 Como testar
 
