@@ -59,8 +59,8 @@ const servidor = http.createServer(function (req, res) {
                 const dados = JSON.parse(body); 
 
                 const { email, senha } = dados;
-                const sql = `INSERT INTO usuarios (email, senha) VALUES (?, ?)`;
-                banco.run(sql, [email, senha], function(err) {
+                const sql = `INSERT INTO usuarios (email, senha, carrinho_compras, roupas_curtidas) VALUES (?, ?, ?, ?)`;
+                banco.run(sql, [email, senha, '[]', '[]'], function(err) {
                     if (err) {
                         res.statusCode = 500;
                         res.end(JSON.stringify({ error: 'Erro ao registrar, verifique se esse email já não está registrado' }));
